@@ -1,0 +1,69 @@
+Description
+You have given an undirected graph with n nodes, and m edges between them. The goal is to add exactly one edge between two nodes such that the total number of connected components in the graph decreases. Your task is to find out the number of ways to add such edge.
+
+Input Format
+The first input line has two integers n and m: the number of nodes and edges. The nodes are numbered 1, 2, …, n.
+After that, there are m lines describing the edges. Each line has two integers a and b: there is an edge between those nodes.
+An edge always connects two different nodes, and there is at most one edge between any two nodes.
+
+Output Format
+Print the number of ways to add such edge, described in the statement.
+
+
+code/////////////////////////////////////
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+
+vector<int> visited;
+vector<vector<int>> g;
+vector<int> freq;
+int n, m;
+vector<int> comp_no;
+
+void dfs(int x, int cc) {
+    visited[x] = 1;
+    comp_no[x] = cc;
+    for (auto neighbour : g[x]) {
+        if (!visited[neighbour]) {
+            dfs(neighbour, cc);
+        }
+    }
+}
+
+int32_t main() {
+    cin >> n >> m;
+    g.resize(n + 1);
+    visited.assign(n + 1, 0);
+    comp_no.resize(n + 1);
+
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+
+    int cc = 0; 
+    for (int i = 1; i <= n; i++) {
+        if (!visited[i]) {
+            cc++;
+            dfs(i, cc);
+        }
+    }
+
+    freq.assign(cc + 1, 0);
+
+    for (int i = 1; i <= n; i++) {
+        freq[comp_no[i]]++;
+    }
+
+    int sum = 0, sqsum = 0;
+    for (int i = 1; i <= cc; i++) {
+        sum += freq[i];
+        sqsum += freq[i] * freq[i];
+    }
+    cout << (sum * sum - sqsum) / 2 << "\n";
+    return 0;
+}
