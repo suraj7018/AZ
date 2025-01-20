@@ -1,0 +1,79 @@
+Description
+You have given an undirected graph G with N nodes and M edges. You've to answer Q queries. Each query is either of the following two types:
+
+1 X: Print the size of the connected components containing node X.
+2 X Y: Print ‘YES’ (without quotes) if node X and Y belong to the same connected component, else print ‘NO’ (without quotes).
+Input Format
+The first line of input contains three space-separated integers N, M, and Q (1 ≤ N, M, Q ≤ 105).
+Next M lines contain two space-separated integers u and v (1 ≤ u, v ≤ N).
+Each of the next Q lines contains queries of one of the types as described in the statement.
+
+Output Format
+Print Q lines as the answer to the Q queries, each on a new line.
+
+
+code//////////////////////////////////////////////////////////////////////////////////////
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+vector<int> visited;
+vector<vector<int>> g;
+vector<int> freq;
+int n, m;
+vector<int> comp_no;
+
+void dfs(int x, int cc) {
+    visited[x] = 1;
+    comp_no[x] = cc;
+    for (auto neighbour : g[x]) {
+        if (!visited[neighbour]) {
+            dfs(neighbour, cc);
+        }
+    }
+}
+
+int main() {
+    int q;
+    cin >> n >> m >> q;
+    g.resize(n + 1);
+    visited.assign(n + 1, 0);
+    comp_no.resize(n + 1);
+    freq.assign(n + 1, 0);
+
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+
+    int cc = 0;
+    for (int i = 1; i <= n; i++) {
+        if (!visited[i]) {
+            cc++;
+            dfs(i, cc);
+        }
+        freq[comp_no[i]]++;
+    }
+
+    while (q--) {
+        int t;
+        cin >> t;
+        if (t == 1) {
+            int x;
+            cin >> x;
+            cout << freq[comp_no[x]] << "\n"; 
+        } else if (t == 2) {
+            int x, y;
+            cin >> x >> y;
+            if (comp_no[x] == comp_no[y]) {
+                cout << "YES" << "\n";
+            } else {
+                cout << "NO" << "\n";
+            }
+        }
+    }
+    return 0;
+}
