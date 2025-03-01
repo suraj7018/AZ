@@ -1,0 +1,136 @@
+Description
+You have a 2-D array of size N x M. Consider connected 0s (which share a common edge) as one single component and 1s as walls. Replace 0s with the size of the connected component but if the size of the component is one, then leave it with 0.
+
+Input Format
+The first line contains a single integer t, the number of test cases.
+For each test case, the first line contains two integers N and M and then there are N lines containing M 0s and 1s, representing a N x M binary matrix.
+
+Output Format
+For each test case, print the final matrix after replacing all the 0s accordingly.
+
+Constraints
+1 ≤ Sum of (N x M) over all test cases ≤ 2 x 105
+0 ≤ Ai ≤ 1
+
+Sample Input 1
+2
+2 2
+0 1
+1 0
+6 5
+1 0 0 1 0
+0 1 0 0 0
+0 0 1 1 0
+0 1 1 0 1
+1 1 1 1 1
+0 1 0 0 0
+Sample Output 1
+0 1 
+1 0 
+1 7 7 1 7
+4 1 7 7 7
+4 4 1 1 7
+4 1 1 0 1
+1 1 1 1 1
+0 1 3 3 3
+Note
+In the first test case, we have only 2 components and both have size 1. So nothing is replaced.
+In the second test case, we have a total of 5 components of size 7, 4, 3, 1, 1 respectively. So all the 0s are replaced accordingly.
+
+///////////////////////////////           code                    /////////////////////////////////////
+
+
+#include <bits/stdc++.h>
+using namespace std;
+#define pii pair<int, int>
+#define mp make_pair
+
+void bfs(vector<vector<int>> &arr, vector<vector<int>> &vis, int i, int j) {
+    int dx[] = {0, 0, 1, -1}, dy[] = {1, -1, 0, 0};
+    int n = arr.size(), m = arr[0].size();
+
+    vis[i][j] = 2;
+    int sz = 1;
+
+    queue<pii> q;
+    q.push(mp(i, j));
+
+    while (!q.empty()) {
+        int x = q.front().first, y = q.front().second;
+        q.pop();
+
+        for (int k = 0; k < 4; k++) {
+            int nx = x + dx[k], ny = y + dy[k];
+
+            if ((nx >= 0 && nx < n && ny >= 0 && ny < m) && vis[nx][ny] == 0) {
+                vis[nx][ny] = 2;
+                sz++;
+                q.push(mp(nx, ny));
+            }
+        }
+    }
+    vis[i][j] = 1;
+
+    if (sz == 1) 
+    return;
+
+    arr[i][j] = sz;
+    q.push(mp(i, j));
+
+    while (!q.empty()) {
+        int x = q.front().first, y = q.front().second;
+        q.pop();
+
+        for (int k = 0; k < 4; k++) {
+            int nx = x + dx[k], ny = y + dy[k];
+
+            if ((nx >= 0 && nx < n && ny >= 0 && ny < m) && vis[nx][ny] == 2) {
+                vis[nx][ny] = 1;
+                arr[nx][ny] = sz;
+                q.push(mp(nx, ny));
+            }
+        }
+    }
+}
+
+void solve() {
+    int n, m;
+    cin >> n >> m;
+    
+    vector<vector<int>> arr(n, vector<int>(m));
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            cin >> arr[i][j];
+
+    // vis: 0 -> not visited, 1 -> completed, 2 -> visited but not completed
+    vector<vector<int>> vis(n, vector<int>(m));
+    
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            vis[i][j] = arr[i][j];
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (vis[i][j] == 0)
+                bfs(arr, vis, i, j);
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++)
+            cout << arr[i][j] << " ";
+        cout << "\n";
+    }
+}
+
+signed main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+
+    int t = 1; 
+    cin >> t;
+    
+    while (t--)
+        solve();
+}
