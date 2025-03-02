@@ -4,6 +4,7 @@ using namespace std;
 vector<vector<int>> g;
 vector<int> indeg;
 vector<int> topo;
+int n, m;
 
 void kahn() {
     queue<int> q;
@@ -26,7 +27,6 @@ void kahn() {
 }
 
 signed main() {
-    int n, m;
     cin >> n >> m;
 
     g.resize(n + 1);
