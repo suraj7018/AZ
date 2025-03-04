@@ -1,0 +1,149 @@
+Description
+Zenithland has 
+n
+n cities and 
+m
+m flight connections. Your task is to design a round trip that begins in a city, goes through one or more other cities, and finally returns to the starting city. Every intermediate city on the route has to be distinct.
+
+Input Format
+First line contains 
+T
+T - Number of test cases.
+First input line of each test case has two integers 
+n
+n and 
+m
+m: the number of cities and flights. The cities are numbered 
+1
+,
+2
+,
+…
+,
+n
+1,2,…,n.
+Then, for each test case, there are 
+m
+m lines describing the flights. Each line has two integers 
+a
+a and 
+b
+b: there is a flight connection from city 
+a
+a to city 
+b
+b. All connections are one-way flights from a city to another city.
+
+Output Format
+For each test case, Print "Yes" if such round trip exists, otherwise print "No" in a new line.
+
+Constraints
+1
+≤
+T
+≤
+10
+1≤T≤10
+1
+≤
+n
+≤
+1
+0
+5
+1≤n≤10 
+5
+ 
+1
+≤
+m
+≤
+2
+⋅
+1
+0
+5
+1≤m≤2⋅10 
+5
+ 
+1
+≤
+a
+,
+b
+≤
+n
+1≤a,b≤n
+
+Sample Input 1
+1
+4 5
+1 3
+2 1
+2 4
+3 2
+3 4
+Sample Output 1
+Yes
+
+
+///////////////////////////////////////////////////////////////           code            ////////////////////////////////////////////////////////
+
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> g;
+vector<int> col;
+bool is_cycle;
+
+void dfs(int node) {
+    col[node] = 2; // Mark as visiting
+
+    for (auto v : g[node]) {
+        if (col[v] == 1) {
+            dfs(v);
+        } 
+        else if (col[v] == 2) { 
+            // Back edge detected → Cycle found
+            is_cycle = true;
+            return;
+        }
+    }
+
+    col[node] = 3; // Mark as fully visited
+}
+
+void solve() {
+    int n, m;
+    cin >> n >> m;
+
+    g.assign(n + 1, vector<int>());
+    col.assign(n + 1, 1);
+    is_cycle = false;
+
+    for (int i = 0; i < m; i++) {
+        int x, y;
+        cin >> x >> y;
+        g[x].push_back(y);
+    }
+
+    for (int i = 1; i <= n; i++) {
+        if (col[i] == 1) {
+            dfs(i);
+            if (is_cycle) break; 
+        }
+    }
+    cout << (is_cycle ? "Yes\n" : "No\n");
+}
+
+signed main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+    return 0;
+}
