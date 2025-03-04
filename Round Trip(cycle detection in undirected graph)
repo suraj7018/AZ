@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int n, m;
+vector<vector<int>> g;
+vector<int> visited;
+vector<int> parent;
+
+bool dfs(int node, int par){
+    visited[node] = 1;
+    parent[node] = par;
+
+    for (auto v : g[node]){
+        if (!visited[v]){
+            if(dfs(v, node)) return true;
+        } 
+        else if(v != par){
+            return true; 
+        }
+    }
+    return false;
+}
+
+signed main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+
+    cin >> n >> m;
+
+    g.resize(n + 1);
+    visited.assign(n + 1, 0);
+    parent.assign(n + 1, -1);
+
+    for (int i = 0; i < m; i++){
+        int a, b;
+        cin >> a >> b;
+        g[a].push_back(b);
+        g[b].push_back(a);
+    }
+
+    for (int i = 1; i <= n; i++){
+        if (!visited[i]) {
+            if (dfs(i, -1)){
+                cout << "YES" << endl;
+                return 0; 
+            }
+        }
+    }
+    cout << "NO" << endl; 
+    return 0;
+}
