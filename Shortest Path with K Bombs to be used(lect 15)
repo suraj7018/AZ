@@ -1,0 +1,86 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define f first
+#define s second
+#define mp make_pair
+#define INF 1e18
+
+int n,m, k;
+vector<vector<char>> arr;
+using state = pair<pair<int, int>, int>;
+
+bool is_valid (int x, int y) {
+    return (x >= 0 and x < n and y >= 0 and y < m);
+}
+
+int dx [] = {-1, 1, 0, 0};
+int dy [] = {0, 0, -1, 1};
+
+vector<state> neighbours (state node) {
+    vector<state> neighs;
+    for (int k = 0; k < 4; k++) {
+        int x = node.f.f + dx[k];
+        int y = node.f.s + dy[k];
+        if (is_valid (x, y)) {
+            int z = node.s;
+            if (arr[x][y] == '#') z += 1;
+           // if(z>k) continue;          this line of code is additional you have to see this wethear this is working or not
+            // neighs.push_back(mp (x, y));
+            neighs.push_back(mp(mp(x,y), z)); 
+        }
+    }
+    return neighs;
+}
+
+vector<vector<vector<int>>> dis;
+
+void bfs (state st_node) {
+    dis.assign(n, vector<vector<int>>(m, vector<int> (k+1, INF)));
+
+    queue<state> q;
+    dis[st_node.f.f][st_node.f.s][st_node.s] = 0;
+    q.push(st_node);
+
+    while (!q.empty()) {
+        state node = q.front(); q.pop();
+        for (state v : neighbours(node)) {
+            if (dis[v.f.f][v.f.s][v.s] == INF) {
+                dis[v.f.f][v.f.s][v.s] = dis[node.f.f][node.f.s][node.s] + 1;
+                q.push(v);
+            }
+        }
+    }
+}
+
+void solve() {
+    cin >> n >> m >> k;
+    arr.resize(n);
+
+    pair<int, int> st, en;
+
+    for (int i = 0; i < n; i++) {
+        arr[i].resize(m);
+        for (int j = 0; j < m; j++) {
+            cin >> arr[i][j];
+            if (arr[i][j] == 'S') st = {i, j};
+            else if (arr[i][j] == 'F') en = {i, j};
+        }
+    }
+
+    bfs ({st, 0});
+
+    int ans = INF;
+    for (int bomb = 0; bomb <= k; bomb++) {
+        ans = min (ans, dis[en.f][en.s][bomb]);
+    }
+    cout << ans << "\n";
+}
+
+signed main(){
+    ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+    // int t; cin>>t; while(t--)
+    solve();
+    
+return 0;
+}
