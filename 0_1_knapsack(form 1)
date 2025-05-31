@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int n;
+int w[3000];
+int v[3000];
+int W;
+int dp[3003][3003];
+
+int rec(int level, int wleft){
+    // pruning
+    // base case
+    if(level==n){
+        return 0;
+    }
+    // cashe check
+    if(dp[level][wleft] != -1){
+        return dp[level][wleft];
+    }
+    // transition
+    int ans = rec(level+1,wleft);
+    if(w[i]<= wleft){
+        ans = max(ans, rec(level+1,wleft-w[level])+v[level]);
+    }
+    // save and return 
+    return dp[level][wleft] = ans;
+}
+
+void solve(){
+    cin>>n;
+    for(int i=0;i<n;i++){
+        cin>>w[i];
+    }
+    for(int i=0;i<n;i++){
+        cin>>v[i];
+    }
+    cin>>W;
+    memset(dp,-1,sizeof(dp));
+    cout<<rec(0,W)<<'\n';
+}
+
+int main(){
+    sovle();
+}
