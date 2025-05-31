@@ -1,0 +1,40 @@
+in this question we have only 3 max step which i can take from the current step
+
+
+
+
+#include<bits/stdc++.h>
+using namespace std;
+int n;
+
+int rec(int level){                  // this level means how many ways we have to reach our destination from this current stair
+    // base case;
+    if(level==n){
+        return 1;
+    }
+    
+    int ans=0;
+    for(int step = 1; step<=3; step++){                       // this is our possible choise which we have
+        if(level+step<=n){                                    // this is a checck step which we write in the notes
+            int ways = rec(level+step);                      // this is the move part from our lccm concept
+            ans = ans+ways;
+        }
+    }
+    return ans;
+}
+
+void solve(){
+    cin>>n;
+    rec(1);
+}
+
+int main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    
+    int t=1;
+    
+    for(int i=0;i<t;i++){
+        solve();
+    }
+}
