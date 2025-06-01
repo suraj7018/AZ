@@ -1,0 +1,48 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m;
+int arr[1001][1001];
+int dp[1001][1001];
+bool done[1001][1001];
+
+int rec(int r, int c){
+    // best LIS ending at this level
+    // pruning
+    if(r<0 || c<0)return 1e9;
+    // base case
+    if(r==0 && c==0)return arr[0][0];
+    // cache checkk
+    if(done[r][c]){
+        return dp[r][c];
+    }
+    // transition/ campute
+    int ans = -1e9;
+    if(r!=0){
+        ans = max(rec(r-1,c)+arr[r][c],ans);
+    }
+    if(c!=0){
+        ans = max(rec(r,c-1)+arr[r][c],ans);
+    }
+    // save and return 
+    done[r][c]=1;
+    return dp[r][c] = ans;
+}
+
+void solve(){
+    cin>>n>>m;
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            cin>>arr[i][j];
+            done[i][j]= 0;
+        }
+    }
+    memset(dp,-1,sizeof(dp));
+    cout<<rec(n-1,m-1)<<endl;
+}
+
+int main(){
+    int t=1;
+    for(int i=0;i<t;i++){
+        solve();
+    }
+}
