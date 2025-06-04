@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int n, m;
+string x, y;
+int dp[1001][1001];
+int back[1001][1001];
+
+int rec(int i, int j) {
+    // base case
+    if (i == n && j == m) {
+        return 0;
+    }
+    // cache check
+    if (dp[i][j] != -1) {
+        return dp[i][j];
+    }
+    // transition
+    int ans = 1e9;
+    if (i < n && j < m && x[i] == y[j]) {
+        int temp = 1 + rec(i + 1, j + 1);
+        if (temp < ans) {
+            ans = temp;
+            back[i][j] = 2;
+        }
+    }
+    if (i < n) {
+        int temp = 1 + rec(i + 1, j);
+        if (temp < ans) {
+            ans = temp;
+            back[i][j] = 0;
+        }
+    }
+    if (j < m) {
+        int temp = 1 + rec(i, j + 1);
+        if (temp < ans) {
+            ans = temp;
+            back[i][j] = 1;
+        }
+    }
+    // save and return
+    return dp[i][j] = ans;
+}
+
+void generate(int i, int j) {
+    if (i == n && j == m) return;
+
+    int ch = back[i][j];
+    if (ch == 0) {
+        cout << "-" << x[i] << " ";
+        generate(i + 1, j);
+    } else if (ch == 1) {
+        cout << "+" << y[j] << " ";
+        generate(i, j + 1);
+    } else {
+        cout << x[i] << " ";
+        generate(i + 1, j + 1);
+    }
+}
+
+void solve() {
+    cin >> x >> y;
+    n = x.length();
+    m = y.length();
+    memset(dp, -1, sizeof(dp));
+    cout << rec(0, 0) << endl;
+    generate(0, 0);
+    cout << endl;
+}
+
+int main() {
+    solve();
+}
