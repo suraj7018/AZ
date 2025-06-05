@@ -1,0 +1,39 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int n;
+int arr[1001];
+int dp[101][101];
+
+int rec(int L, int R){
+    // pruning 
+    // base case
+    if(L+1 == R){
+        return 0;
+    }
+    // cache check
+    if(dp[L][R] != -1){
+        return dp[L][R];
+    }
+    // transition
+    int ans = 1e9;
+    for(int j=L+1;j<R;j++){
+        ans = min(ans,(arr[R]-arr[L] + rec(L,j) + rec(j,R)));
+    }
+    // save and return 
+    return dp[L][R] = ans;
+}
+
+void solve(){
+    cin>>n;
+    for(int i=1;i<=n;i++){
+        cin>>arr[i];
+    }
+    arr[0] = 0;
+    memset(dp,-1,sizeof(dp));
+    cout<<rec(0,n)<<endl;
+}
+
+int main(){
+    solve();
+}
