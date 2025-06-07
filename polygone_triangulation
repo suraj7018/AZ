@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int n;
+pair<double, double> p[1001];
+
+double sq(double x) {
+    return x * x;
+}
+
+double cost(int x, int y) {
+    double dist = sqrt(sq(p[x].first - p[y].first) + sq(p[x].second - p[y].second));
+    return sin(dist);
+}
+
+void solve() {
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> p[i].first >> p[i].second;
+    }
+
+    double dp[n + 1][n + 1];
+    memset(dp, 0, sizeof(dp));  // Initialize with 0
+
+    for (int len = 3; len <= n; len++) {
+        for (int l = 1; l + len - 1 <= n; l++) {
+            int r = l + len - 1;
+
+            // base case (not needed inside loop, but if used, skip)
+            if (len == 3) {
+                continue;
+            }
+
+            double ans = -1e9;
+            for (int x = l + 1; x <= r - 1; x++) {
+                if (x == l + 1) {
+                    ans = max(ans, cost(l + 1, r) + dp[l + 1][r]);
+                } else if (x == r - 1) {
+                    ans = max(ans, cost(l, r - 1) + dp[l][r - 1]);
+                } else {
+                    ans = max(ans, cost(l, x) + cost(x, r) + dp[l][x] + dp[x][r]);
+                }
+            }
+            dp[l][r] = ans;
+        }
+    }
+
+    cout << dp[1][n] << endl;
+}
+
+int main() {
+    solve();
+    return 0;
+}
