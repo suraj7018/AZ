@@ -1,0 +1,133 @@
+///////////////////        find the number of n length binary string that doesn't contain "0100" as a subsequence         ///////////////////////////////////////////////////////
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int n;
+string t = "0100";
+int dp[10010][5];
+
+int rec(int level, int match){
+    // pruning
+    if(match == 4){
+        return 0;
+    }
+    // base case
+    if(level==n){
+        return 1;
+    }
+    // cashe check
+    if(dp[level][match] != -1){
+        return dp[level][match];
+    }
+    // transition
+    int ans = rec(level+1,match+1) + rec(level+1,match);
+    // save and return 
+    return dp[level][match] = ans;
+}
+
+void solve(){
+    cin>>n;
+    memset(dp,-1,sizeof(dp));
+    cout<<rec(0,0)<<endl;
+}
+
+int main(){
+    solve();
+}
+
+
+
+///////////////////        find the number of n length binary string that doesn't contain "0100" as a substring         //////////////////////////////////////////////////////
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int n;
+string t = "0100";
+int dp[10010][16];
+
+int rec(int level, int lastthree){
+    // pruning
+    // base case
+    if(level==n){
+        return 1;
+    }
+    // cashe check
+    if(dp[level][lastthree] != -1){
+        return dp[level][lastthree];
+    }
+    // transition
+    int ans = 0;
+    if(level>= 3 && lastthree == 2){ // 010
+        // don't allowed the zero
+        ans = rec(level+1,5);
+    }
+    else{
+        ans = rec(level+1,(lastthree<<1 |0) & 7);
+        ans = ans+rec(level+1,(lastthree<<1 |1) & 7);
+    }
+    // save and return 
+    return dp[level][lastthree] = ans;
+}
+
+void solve(){
+    cin>>n;
+    memset(dp,-1,sizeof(dp));
+    cout<<rec(0,0)<<endl;
+}
+
+int main(){
+    solve();
+}
+
+
+
+////////////////////////////////      another optimisation       //////////////////////////////////
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int n;
+string t = "0100";
+int dp[10010][5];
+
+int rec(int level, int match){
+    // pruning
+    if(match == 4){
+        return 0;
+    }
+    // base case
+    if(level==n){
+        return 1;
+    }
+    // cashe check
+    if(dp[level][match] != -1){
+        return dp[level][match];
+    }
+    // transition
+    int ans = 0;
+    if(match == 0){
+        ans += rec(level + 1, match) + rec(level + 1, 1);
+    }
+	else if(match == 1){
+	    ans += rec(level + 1, match) + rec(level + 1, 2);
+	}
+	else if(match == 2){
+	    ans += rec(level + 1, 0) + rec(level + 1, 3);
+	}
+	else ans += rec(level + 1, 2);
+    // save and return 
+    return dp[level][match] = ans;
+}
+
+void solve(){
+    cin>>n;
+    memset(dp,-1,sizeof(dp));
+    cout<<rec(0,0)<<endl;
+}
+
+int main(){
+    solve();
+}
