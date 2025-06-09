@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define endl '\n'
+
+int n, m;
+vector<vector<char>> grid;
+int dp[1001][1001];
+
+// rec: returns the number of paths ending at (row, col)
+int rec(int row, int col) {
+    // pruning
+    if (row <= 0 || col <= 0 || grid[row][col] == '#') {
+        return 0;
+    }
+
+    // base case
+    if (row == 1 && col == 1) {
+        return 1;
+    }
+
+    // cache check
+    if (dp[row][col] != -1) {
+        return dp[row][col];
+    }
+
+    // transition
+    int ans = rec(row - 1, col) + rec(row, col - 1);
+
+    // save and return
+    return dp[row][col] = ans;
+}
+
+void solve() {
+    cin >> n >> m;
+    grid.resize(n + 1, vector<char>(m + 1));
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            cin >> grid[i][j];
+        }
+    }
+
+    memset(dp, -1, sizeof(dp));
+    cout << rec(n, m) << endl;
+}
+
+signed main() {
+    ios_base::sync_with_stdio(false); 
+    cin.tie(0); cout.tie(0);
+    solve();
+}
