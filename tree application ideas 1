@@ -1,0 +1,118 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAXN = 100100;
+
+vector<int> g[MAXN];
+int dep[MAXN];           
+int par[MAXN];          
+bool isleaf[MAXN];       
+int subtreeSz[MAXN];    
+int no_of_child[MAXN];  
+
+void dfs(int node, int parent, int depth) {
+    dep[node] = depth;
+    par[node] = parent;
+    subtreeSz[node] = 1;
+
+    for (auto v : g[node]) {
+        if (v != parent) {
+            no_of_child[node]++;
+            dfs(v, node, depth + 1);
+            subtreeSz[node] += subtreeSz[v];
+        }
+    }
+
+    if (no_of_child[node] == 0) {
+        isleaf[node] = true;
+    }
+}
+
+void solve() {
+    int n;
+    cin >> n;
+
+    for (int i = 1; i < n; i++) {
+        int a, b;
+        cin >> a >> b;
+        g[a].push_back(b);
+        g[b].push_back(a);
+    }
+
+    dfs(1, 0, 0); 
+
+    for (int i = 1; i <= n; i++) {
+        cout << "Node: " << i
+             << ", Depth: " << dep[i]
+             << ", Parent: " << par[i]
+             << ", Subtree Size: " << subtreeSz[i]
+             << ", Is Leaf: " << (isleaf[i] ? "Yes" : "No")
+             << ", Children: " << no_of_child[i]
+             << '\n';
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0); cout.tie(0);
+    solve();
+    return 0;
+}
+
+
+///////////////////////    finding the diameter of the tree using 2 dfs method          /////////      we also have another method but that method is very complex       /////////////////////
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> g[10000];
+int dep[100100];
+int par[100100];
+
+void dfs(int node, int parent, int depth){
+    dep[node] = depth;
+    par[node] = parent;
+    
+    for(auto v: g[node]){
+        if(v!= par[node]){
+            dfs(v,node,depth+1);
+        }
+    }
+}
+
+void solve(){
+    int n; cin>>n;
+    for(int i=1;i<n;i++){
+        int a,b; cin>>a>>b;
+        g[a].push_back(b);
+        g[b].push_back(a);
+    }
+    dfs(1,0,0);
+    int maxch = 1;
+    for(int j=2;j<n;j++){
+        if(dep[j]>dep[maxch]){
+            maxch = j;
+        }
+    }
+    
+    dfs(maxch,0,0);
+    maxch = 1;
+    for(int j=2;j<n;j++){
+        if(dep[j]>dep[maxch]){
+            maxch = j;
+        }
+    }
+    cout<<dep[maxch]<<endl;
+}
+
+int main(){
+    solve();
+}
+
+
+
+//////////////     find the min time to travel all the node in the tree no need to return at the initial position whhere you start     ///////////////
+
+ans for this question is   (2*edge-diameter)    we can adjust it in the above code only in one line
