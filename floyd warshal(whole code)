@@ -1,0 +1,165 @@
+//////////   this is code for finding the path from A to B reach in shortest distance   /////////////
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int dist[404][404];
+int par[404][404];
+
+// Function to print the path from i to j
+void printPath(int i, int j) {
+    if (i != j) printPath(i, par[i][j]);
+    cout << j << " ";
+}
+
+void solve() {
+    int n, m;
+    cin >> n >> m;
+
+    // Initialize distance matrix
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == j) dist[i][j] = 0;
+            else dist[i][j] = 1e9;
+        }
+    }
+
+    // Read edges
+    for (int i = 0; i < m; i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        dist[a][b] = min(dist[a][b], c);
+    }
+
+    // Initialize parent matrix for path reconstruction
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (dist[i][j] != 1e9) par[i][j] = i;
+            else par[i][j] = -1;
+        }
+    }
+
+    // Floyd-Warshall algorithm with path reconstruction
+    for (int k = 1; k <= n; k++) {
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                    par[i][j] = par[k][j];
+                }
+            }
+        }
+    }
+
+    // Example usage:
+    // Print distance from 1 to n
+    cout << "Shortest distance from 1 to " << n << ": " << dist[1][n] << endl;
+
+    // Print path from 1 to n
+    cout << "Path: 1 ";
+    printPath(1, n);
+    cout << endl;
+}
+
+int main() {
+    solve();
+    return 0;
+}
+
+
+/////////////////////////              which nodde is reachable from node A                 ///////////////////////////////
+
+
+
+void solve() {
+    int n, m;
+    cin >> n >> m;
+
+    // Initialize distance matrix
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == j) dist[i][j] = 0;
+            else dist[i][j] = 1e9;
+        }
+    }
+
+    // Read edges
+    for (int i = 0; i < m; i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        dist[a][b] = min(dist[a][b], c);
+    }
+
+
+    // Floyd-Warshall algorithm with path reconstruction
+    for (int k = 1; k <= n; k++) {
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                dis[i][j] = dis[i][j] | (dis[i][k] & dis[k][j]);
+            }
+        }
+    }
+
+
+
+
+    ///////////////////          shortest cycle in graph          ///////////////////////////////////
+
+
+    void solve() {
+    int n, m;
+    cin >> n >> m;
+
+    // Initialize distance matrix
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= n; j++) {
+            dist[i][j] = 1e9;
+        }
+    }
+
+    // Read edges
+    for (int i = 0; i < m; i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        dist[a][b] = min(dist[a][b], c);
+    }
+
+
+    // Floyd-Warshall algorithm with path reconstruction
+    for (int k = 1; k <= n; k++) {
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                dis[i][j] = min(dis[i][j] , (dis[i][k] + dis[k][j]));
+            }
+        }
+    }
+
+    int ans = 1e9;
+    for(int i=0;i<n;i++{
+       ans = min(ans,dis[i][i];
+    }
+    cout<<ans<<endl;
+    
+    ////////////////////////////////               this line of code for checking the negative cycle in graph using floyd warshal               /////////////////////////  
+    if(ans<0) cout<<"there is a negative cycle";
+    else cout<<"there is no any negative cycle";
+
+
+
+    ////////////////////      finding the diameter in graph is nothing but a finding the longest shortest path means(out of all the shortest path find the largest one)  till now from floyd warshal we have find the 
+    shortest distance between any two node so take them maximum from them you will get the ans;        /////////////////////////////////////
+
+
+
+int ans = 1e9;
+    for(int i=0;i<n;i++{
+       for(int j=0;j<m;j++){
+           ans = max(ans,dis[i][j]);
+       }
+    }
+    cout<<ans<<endl;
+
+
+    ///////////////////          this ans return the diameter in graph               /////////////////////////////
