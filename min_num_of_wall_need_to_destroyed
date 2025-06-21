@@ -1,0 +1,77 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+
+using state = pair<int, int>;
+#define mp make_pair
+
+int n, m; 
+vector<vector<int>> g;
+vector<vector<int>> dist;
+vector<vector<int>> vis;
+
+int dx[] = {-1, 1, 0, 0};
+int dy[] = {0, 0, -1, 1};  
+
+bool check (int x, int y) {
+    return (x >= 0 and x < n and y >= 0 and y < m);
+}
+
+void bfs01(int stx, int sty){
+    deque<state> q;
+    dist[stx][sty] = 0;
+    q.push_back({stx, sty});
+    
+    while (!q.empty()) {
+        auto [curx, cury] = q.front(); q.pop_front();
+        if (vis[curx][cury]) continue;
+        vis[curx][cury] = 1;
+
+        for (int i = 0; i < 4; i++) {
+            int nx = curx + dx[i], ny = cury + dy[i];
+            if (check(nx, ny) && !vis[nx][ny]) {
+                if (g[nx][ny] == 1 && dist[nx][ny] > dist[curx][cury] + 1) {
+                    dist[nx][ny] = dist[curx][cury] + 1;
+                    q.push_back({nx, ny});
+                } else if (g[nx][ny] == 0 && dist[nx][ny] > dist[curx][cury]) {
+                    dist[nx][ny] = dist[curx][cury];
+                    q.push_front({nx, ny});
+                }
+            }
+        }
+    }
+}
+
+void solve() {
+    cin >> n >> m;
+    g.assign(n, vector<int>(m, 0));
+    dist.assign(n, vector<int> (m, 1e9));
+    vis.assign(n, vector<int> (m, 0));
+
+    // 0 -> means path '.', 1 -> means walls '#'for (int i = 0; i < n; i++) {
+    for(int i=0;i<n;i++){
+        for (int j = 0; j < m; j++) {
+            char tt; cin >> tt;
+            if (tt == '#') g[i][j] = 1;
+            else g[i][j] = 0;
+        }
+    }
+    int stx, sty, fx, fy; 
+    cin >> stx >> sty >> fx >> fy;
+    
+    bfs01(stx, sty);
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cout << dist[i][j]<< " ";  
+        }
+        cout << "\n";
+    }
+}
+
+signed main(){
+    ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+    solve();
+    
+return 0;
+}
