@@ -1,0 +1,84 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define f first
+#define s second
+#define mp make_pair
+
+int n, m, k;
+vector<vector<char>> arr;
+using state = pair<pair<int, int>, int>; // ((x,y), bombs_used)
+
+bool is_valid(int x, int y) {
+    return (x >= 0 && x < n && y >= 0 && y < m);
+}
+
+int dx[] = {-1, 1, 0, 0};
+int dy[] = {0, 0, -1, 1};
+
+vector<vector<vector<int>>> dis;
+
+vector<state> neighbours(state node) {
+    vector<state> neighs;
+    for (int i = 0; i < 4; i++) {
+        int x = node.f.f + dx[i];
+        int y = node.f.s + dy[i];
+        if (is_valid(x, y)) {
+            int bombs = node.s;
+            if (arr[x][y] == '#') bombs++;
+            if (bombs <= k)
+                neighs.push_back(mp(mp(x, y), bombs));
+        }
+    }
+    return neighs;
+}
+
+void bfs(state start_node) {
+    dis.assign(n, vector<vector<int>>(m, vector<int>(k + 1, 1e9)));
+
+    queue<state> q;
+    dis[start_node.f.f][start_node.f.s][start_node.s] = 0;
+    q.push(start_node);
+
+    while (!q.empty()) {
+        state node = q.front(); q.pop();
+        for (state v : neighbours(node)) {
+            if (dis[v.f.f][v.f.s][v.s] == 1e9) {
+                dis[v.f.f][v.f.s][v.s] = dis[node.f.f][node.f.s][node.s] + 1;
+                q.push(v);
+            }
+        }
+    }
+}
+
+void solve() {
+    cin >> n >> m >> k;
+    arr.resize(n);
+
+    pair<int, int> st, en;
+
+    for (int i = 0; i < n; i++) {
+        arr[i].resize(m);
+        for (int j = 0; j < m; j++) {
+            cin >> arr[i][j];
+            if (arr[i][j] == 'S') st = {i, j};
+            else if (arr[i][j] == 'F') en = {i, j};
+        }
+    }
+
+    bfs({st, 0});
+
+    int ans = 1e9;
+    for (int bombs = 0; bombs <= k; bombs++) {
+        ans = min(ans, dis[en.f][en.s][bombs]);
+    }
+
+    if (ans == 1e9) cout << -1 << "\n"; // Not reachable
+    else cout << ans << "\n";
+}
+
+signed main() {
+    ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+    solve();
+    return 0;
+}
