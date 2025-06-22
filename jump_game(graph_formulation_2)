@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const long long INF = 1e18;
+vector<vector<pair<int, int>>> g;
+vector<long long> dist;
+
+void dijkstra(int start, int total_nodes) {
+    dist.assign(total_nodes + 1, INF);
+    priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<>> pq;
+
+    dist[start] = 0;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d > dist[u]) continue;
+
+        for (auto [v, w] : g[u]) {
+            if (dist[v] > d + w) {
+                dist[v] = d + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+}
+
+void solve() {
+    int n;
+    long long a, b;
+    cin >> n >> a >> b;
+
+    vector<int> arr(n + 1);
+    map<int, vector<int>> mp;
+
+    for (int i = 1; i <= n; i++) {
+        cin >> arr[i];
+        mp[arr[i]].push_back(i);
+    }
+
+    int src;
+    cin >> src;
+
+    // Resize graph: n original nodes + up to 100 virtual nodes (for each value)
+    g.resize(n + 1 + mp.size());
+
+    for (int i = 1; i < n; i++) {
+        g[i].push_back({i + 1, b});
+        g[i + 1].push_back({i, b});
+    }
+
+    int Dnode = n + 1;
+    for (auto p : mp) {
+        for (int idx : p.second) {
+            g[Dnode].push_back({idx, a});
+            g[idx].push_back({Dnode, 0});
+        }
+        Dnode++;
+    }
+
+    dijkstra(src, Dnode);
+
+    for (int i = 1; i <= n; i++) {
+        cout << dist[i] << " ";
+    }
+    cout << '\n';
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    solve();
+    return 0;
+}
