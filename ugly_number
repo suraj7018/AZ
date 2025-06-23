@@ -1,0 +1,25 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+#define endl '\n'
+
+void solve(){
+    vector<int> v{2,3,5};
+    int k; cin>>k;
+    set<int>st;
+    vector<int> ans;
+    st.insert(1);
+    while(ans.size()<k){
+        ans.push_back(*st.begin());
+        for(auto x:v){
+            st.insert(*st.begin())*x);
+        }
+        st.erase(*st.begin());
+    }
+    cout<<ans.back()<<endl;
+}
+
+signed main(){
+    solve();
+    return 0;
+}
