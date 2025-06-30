@@ -1,0 +1,117 @@
+#include <iostream>
+using namespace std;
+
+struct node {
+    int data;
+    node* next;
+    node(int val) {
+        data = val;
+        next = NULL;
+    }
+};
+
+// Step 1: Split at mid
+void splitMid(node* actual, node** ls1, node** ls2) {
+    node* slow = actual;
+    node* fast = actual->next;
+
+    while (fast != NULL) {
+        fast = fast->next;
+        if (fast != NULL) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+
+    node* temp = slow->next;
+    slow->next = NULL;
+
+    *ls1 = actual;
+    *ls2 = temp;
+}
+
+// Step 2: Reverse a linked list
+void reverse(node* cur, node** head) {
+    if (cur == NULL) {
+        *head = NULL;
+        return;
+    }
+    if (cur->next == NULL) {
+        *head = cur;
+        return;
+    } else {
+        reverse(cur->next, head);
+        cur->next->next = cur;
+        cur->next = NULL;
+    }
+}
+
+// Step 3: Merge Alternately
+node* alternate(node* ls1, node* ls2) {
+    node* head = ls1;
+    node* temp1 = ls1;
+    node* temp2 = ls2;
+
+    while (temp1 != NULL && temp2 != NULL) {
+        node* next1 = temp1->next;
+        node* next2 = temp2->next;
+
+        temp1->next = temp2;
+        temp2->next = next1;
+
+        temp1 = next1;
+        temp2 = next2;
+    }
+
+    return head;
+}
+
+// Step 4: Fold function to perform all steps
+node* fold(node* inplist) {
+    node *temp1, *temp2, *temp3;
+    splitMid(inplist, &temp1, &temp2);
+    reverse(temp2, &temp3);
+    return alternate(temp1, temp3);
+}
+
+// Utility function to print a linked list
+void printList(node* head) {
+    while (head != NULL) {
+        cout << head->data << " ";
+        head = head->next;
+    }
+    cout << endl;
+}
+
+// Utility function to append node at the end
+void append(node** head, int val) {
+    node* newNode = new node(val);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+int main() {
+    node* head = NULL;
+
+    // Create a sample list: 1 -> 2 -> 3 -> 4 -> 5 -> 6
+    for (int i = 1; i <= 6; ++i) {
+        append(&head, i);
+    }
+
+    cout << "Original List: ";
+    printList(head);
+
+    head = fold(head);
+
+    cout << "Folded List: ";
+    printList(head);
+
+    return 0;
+}
